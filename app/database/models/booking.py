@@ -15,8 +15,8 @@ class Booking(Base):
     total_cost: Mapped[int] = mapped_column(Computed("(date_to - date_from) * price"))
     total_days: Mapped[int] = mapped_column(Computed("date_to - date_from"))
 
-    user: Mapped["Users"] = relationship(back_populates="bookings")
-    room: Mapped["Rooms"] = relationship(back_populates="bookings")
+    user: Mapped["User"] = relationship(back_populates="bookings")
+    room: Mapped["Room"] = relationship(back_populates="bookings")
 
     def __str__(self) -> str:
         return f"Booking #{self.id}"

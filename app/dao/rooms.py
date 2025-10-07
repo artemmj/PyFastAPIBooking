@@ -1,4 +1,4 @@
-from sqlalchemy import RowMapping, insert
+from sqlalchemy import RowMapping, insert, select
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.database.config import async_session_maker
@@ -24,7 +24,7 @@ class RoomsDAO(BaseDAO):
         try:
             async with async_session_maker() as session:
                 add_room = (
-                    insert(Room)
+                    insert(cls.model)
                     .values(
                         hotel_id=hotel_id,
                         name=name,
@@ -34,7 +34,7 @@ class RoomsDAO(BaseDAO):
                         quantity=quantity,
                         image_id=image_id,
                     )
-                    .returning(Room.__table__.c)
+                    .returning(cls.model.__table__.c)
                 )
                 new_room = await session.execute(add_room)
                 await session.commit()
@@ -42,4 +42,16 @@ class RoomsDAO(BaseDAO):
         except (SQLAlchemyError, Exception) as e:
             if isinstance(e, (SQLAlchemyError, Exception)):
                 msg = "RoomsDAO.add() Exc: Cannot add room"
+            logger.error(msg, exc_info=True)
+
+    @classmethod
+    async def get_options(cls):
+        try:
+            async with async_session_maker() as session:
+                options = select(cls.model.options)
+                opts = await session.execute(options)
+                return opts.mappings().all()
+        except (SQLAlchemyError, Exception) as e:
+            if isinstance(e, (SQLAlchemyError, Exception)):
+                msg = "RoomsDAO.get_options() Exc: Cannot get options"
             logger.error(msg, exc_info=True)

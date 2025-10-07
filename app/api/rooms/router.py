@@ -6,7 +6,7 @@ from app.dao.rooms import RoomsDAO
 from app.database.models import User
 from app.exceptions import HotelCannotBeCreated
 
-from .schemas import RoomSchema, NewRoomSchema
+from .schemas import RoomSchema, NewRoomSchema, RoomsOptionsSchema
 
 router = APIRouter(prefix="/rooms", tags=["Комнаты"])
 
@@ -32,3 +32,14 @@ async def add_new_room(room: NewRoomSchema, user: User = Depends(get_current_use
     if not room:
         raise HotelCannotBeCreated
     return TypeAdapter(NewRoomSchema).validate_python(room).model_dump()
+
+
+@router.get("/options", summary='Получить список доступных опций комнат для фильтрации')
+async def get_room_options(user: User = Depends(get_current_user)):
+    """Получить список всех доступных опций, чтобы фильтровать по ним."""
+    options = await RoomsDAO.get_options()
+    opts_set = set()
+    for room in options:
+        for opt in room['options']:
+            opts_set.add(opt)
+    return opts_set

@@ -9,7 +9,7 @@ class Hotel(Base):
     address: Mapped[str]
     image_id: Mapped[int]
 
-    rooms: Mapped[list["Rooms"]] = relationship(back_populates="hotel")
+    rooms: Mapped[list["Room"]] = relationship(back_populates="hotel")
 
     def __str__(self) -> str:
         return f"Hotel #{self.id} ({self.name})"

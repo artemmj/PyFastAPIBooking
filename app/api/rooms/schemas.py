@@ -22,3 +22,7 @@ class NewRoomSchema(BaseModel):
     options: list[str]
     quantity: int
     image_id: int
+
+
+class RoomsOptionsSchema(BaseModel):
+    title: str

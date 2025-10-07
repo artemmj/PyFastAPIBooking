@@ -8,7 +8,7 @@ class User(Base):
     email: Mapped[str]
     hashed_password: Mapped[str_255]
 
-    bookings: Mapped[list["Bookings"]] = relationship(back_populates="user")
+    bookings: Mapped[list["Booking"]] = relationship(back_populates="user")
 
     def __str__(self) -> str:
         return f"User #{self.id} ({self.email})"
