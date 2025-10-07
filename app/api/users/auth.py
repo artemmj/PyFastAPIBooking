@@ -9,9 +9,7 @@ from app.exceptions import IncorrectEmailOrPasswordException
 from app.dao.users import UsersDAO
 from app.settings import settings
 
-# Контекст для хеширования паролей с использованием алгоритма bcrypt
-# Класс CryptContext имеет методы hash, verify и тд. для работы с паролями
-_pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+_pwd_context = CryptContext(schemes=["bcrypt", "pbkdf2_sha256"], default="pbkdf2_sha256", deprecated="auto")
 
 
 def get_password_hash(password: str) -> str:

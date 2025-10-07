@@ -19,6 +19,14 @@ str_uniq = Annotated[str, mapped_column(unique=True, nullable=False)]
 str_null_true = Annotated[str, mapped_column(nullable=True)]
 
 
+async def get_async_db():
+    async with async_session_maker() as session:
+        try:
+            yield session
+        finally:
+            await session.close()
+
+
 class Base(AsyncAttrs, DeclarativeBase):
     __abstract__ = True
 

@@ -26,3 +26,7 @@ class NewRoomSchema(BaseModel):
 
 class RoomsOptionsSchema(BaseModel):
     title: str
+
+
+class RoomsOptionsFilterSchema(BaseModel):
+    options: list[str]

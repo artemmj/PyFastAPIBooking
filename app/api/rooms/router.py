@@ -1,20 +1,23 @@
-from fastapi import APIRouter, Depends
+from typing import List, Optional
+
+from fastapi import APIRouter, Depends, Query
 from pydantic import TypeAdapter
 
 from app.api.users.dependencies import get_current_user
 from app.dao.rooms import RoomsDAO
-from app.database.models import User
+from app.database.models.user import User
 from app.exceptions import HotelCannotBeCreated
-
-from .schemas import RoomSchema, NewRoomSchema, RoomsOptionsSchema
+from .schemas import RoomSchema, NewRoomSchema
 
 router = APIRouter(prefix="/rooms", tags=["Комнаты"])
 
 
 @router.get("", summary='Получить все комнаты')
-async def get_all_rooms() -> list[RoomSchema]:
+async def get_all_rooms(
+    options: Optional[List[str]] = Query(None, alias="options", description="Фильтр по удобствам"),
+) -> list[RoomSchema]:
     """Получить все комнаты."""
-    return await RoomsDAO.find_all()
+    return await RoomsDAO.find_all(options)
 
 
 @router.post("", summary='Добавить новую комнату (TODO только для админа)')

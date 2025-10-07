@@ -1,4 +1,5 @@
-from sqlalchemy import JSON, ForeignKey
+from sqlalchemy import ForeignKey
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.config import Base, int_pk
@@ -10,7 +11,7 @@ class Room(Base):
     name: Mapped[str]
     description: Mapped[str]
     price: Mapped[int]
-    options: Mapped[list[str]] = mapped_column(JSON)
+    options: Mapped[list[str]] = mapped_column(JSONB)
     quantity: Mapped[int]
     image_id: Mapped[int]
 
