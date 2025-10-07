@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Бронирование</title>
+</head>
+<body>
+    <h1>Форма бронирования</h1>
+    <form action="/bookings/add" method="post">
+        <input type="hidden" name="room_id" id="room_id" value="">
+        <label>Дата заезда:</label>
+        <input type="date" name="date_from" required><br><br>
+        <label>Дата выезда:</label>
+        <input type="date" name="date_to" required><br><br>
+        <button type="submit">Забронировать</button>
+    </form>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomId = urlParams.get('room_id');
+        if (roomId) {
+            document.getElementById('room_id').value = roomId;
+        }
+    </script>
+</body>
+</html>

@@ -11,9 +11,11 @@ class RoomsDAO(BaseDAO):
     model = Room
 
     @classmethod
-    async def find_all(cls, options=None):
+    async def find_all(cls, options=None, hotel_id: int = None):
         async with async_session_maker() as session:
             query = select(cls.model)
+            if hotel_id:
+                query = query.where(cls.model.hotel_id == hotel_id)
             if options:
                 conditions = []
                 for option in options:

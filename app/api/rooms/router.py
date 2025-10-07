@@ -14,10 +14,11 @@ router = APIRouter(prefix="/rooms", tags=["Комнаты"])
 
 @router.get("", summary='Получить все комнаты')
 async def get_all_rooms(
+    hotel_id: int | None = None,
     options: Optional[List[str]] = Query(None, alias="options", description="Фильтр по удобствам"),
 ) -> list[RoomSchema]:
     """Получить все комнаты."""
-    return await RoomsDAO.find_all(options)
+    return await RoomsDAO.find_all(options, hotel_id)
 
 
 @router.post("", summary='Добавить новую комнату (TODO только для админа)')
