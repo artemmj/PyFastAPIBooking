@@ -1,180 +1,216 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>Бронирование отелей</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 20px;
-            background-color: #f8f9fa;
-            color: #333;
-        }
-        h1 {
-            color: #2c3e50;
-            text-align: center;
-        }
-        .filters {
-            background-color: #e9ecef;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .filters input {
-            padding: 8px;
-            margin-right: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .filters button {
-            padding: 8px 15px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .filters button:hover {
-            background-color: #2980b9;
-        }
-        .hotel {
-            border: 1px solid #dee2e6;
-            padding: 15px;
-            margin: 15px 0;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .hotel h2 {
-            margin-top: 0;
-            color: #2c3e50;
-        }
-        .rooms-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 15px;
-            margin-top: 10px;
-        }
-        .room {
-            border: 1px solid #e9ecef;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 6px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-        .room h4 {
-            margin-top: 0;
-            color: #34495e;
-        }
-        button {
-            background-color: #27ae60;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            cursor: pointer;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        button:hover {
-            background-color: #219a52;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Бронирование отелей</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+    }
+
+    /* Фильтры */
+    .filters {
+      background: white;
+      padding: 16px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      margin-bottom: 24px;
+    }
+    .filters h2 {
+      margin-bottom: 12px;
+      font-size: 1.1rem;
+    }
+    .filters label {
+      display: inline-block;
+      margin-right: 16px;
+      margin-bottom: 8px;
+    }
+
+    /* Отели и номера */
+    .hotel-section {
+      margin-bottom: 40px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+    .hotel-header {
+      padding: 16px;
+      background: #f1f5f9;
+      font-weight: bold;
+      font-size: 1.3rem;
+    }
+    .rooms-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+    .room-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .room-card h3 {
+      margin-bottom: 6px;
+      font-size: 1.1rem;
+    }
+    .room-card p {
+      margin-bottom: 12px;
+      color: #475569;
+    }
+    .room-card .price {
+      font-weight: bold;
+      color: #0ea5e9;
+      margin-bottom: 12px;
+    }
+    .room-card a {
+      display: inline-block;
+      background: #0ea5e9;
+      color: white;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 500;
+    }
+    .room-card a:hover {
+      background: #0284c7;
+    }
+    .empty {
+      text-align: center;
+      padding: 40px;
+      color: #94a3b8;
+    }
+  </style>
 </head>
 <body>
-    <h1>Список отелей</h1>
+  <div class="container">
+    <header>
+      <h1>Бронирование отелей</h1>
+    </header>
+
     <div class="filters">
-        <label>Фильтр по удобствам:</label><br>
-        <input type="text" id="amenityInput" placeholder="Введите удобство">
-        <button onclick="applyFilters()">Применить</button>
+      <h2>Удобства</h2>
+      <div id="filters-container">
+        <!-- Фильтры будут загружены сюда -->
+      </div>
     </div>
-    <div id="hotels-container"></div>
 
-    <script>
-        let allRooms = [];
+    <div id="hotels-container">
+      <!-- Отели и номера -->
+    </div>
+  </div>
 
-        async function loadHotels() {
-            const response = await fetch('/hotels');
-            const hotels = await response.json();
+  <script>
+    const API_BASE = 'http://localhost:8000'; // ← замените на ваш бэкенд
 
-            const container = document.getElementById('hotels-container');
-            container.innerHTML = '';
+    let allHotels = [];
+    let currentFilters = [];
 
-            for (const hotel of hotels) {
-                const hotelDiv = document.createElement('div');
-                hotelDiv.className = 'hotel';
-                hotelDiv.innerHTML = `<h2>${hotel.name}</h2><p>${hotel.address}</p>`;
-                
-                const roomsGrid = document.createElement('div');
-                roomsGrid.className = 'rooms-grid';
-                roomsGrid.id = `rooms-${hotel.id}`;
-                
-                hotelDiv.appendChild(roomsGrid);
-                container.appendChild(hotelDiv);
+    // Загрузка данных
+    async function loadData() {
+      try {
+        // Загружаем отели и список удобств
+        const [hotelsRes, optionsRes] = await Promise.all([
+          fetch(`${API_BASE}/hotels`),
+          fetch(`${API_BASE}/rooms/options`)
+        ]);
+        allHotels = await hotelsRes.json();
+        const allOptions = await optionsRes.json();
 
-                loadRooms(hotel.id);
-            }
+        // Рендерим фильтры
+        const filtersContainer = document.getElementById('filters-container');
+        filtersContainer.innerHTML = allOptions.map(opt => `
+          <label>
+            <input type="checkbox" value="${opt}" onchange="onFilterChange()"> ${opt}
+          </label>
+        `).join('');
+
+        // Загружаем номера
+        loadRooms();
+      } catch (err) {
+        console.error('Ошибка загрузки данных:', err);
+        document.getElementById('hotels-container').innerHTML = '<div class="empty">Ошибка загрузки</div>';
+      }
+    }
+
+    async function loadRooms(options = []) {
+      let url = `${API_BASE}/rooms`;
+      if (options.length > 0) {
+        const params = new URLSearchParams();
+        options.forEach(opt => params.append('options', opt));
+        url += '?' + params.toString();
+      }
+
+      try {
+        const res = await fetch(url);
+        const rooms = await res.json();
+
+        // Группируем номера по отелю
+        const grouped = {};
+        rooms.forEach(room => {
+          if (!grouped[room.hotel_id]) grouped[room.hotel_id] = [];
+          grouped[room.hotel_id].push(room);
+        });
+
+        // Рендерим отели с номерами
+        const container = document.getElementById('hotels-container');
+        if (Object.keys(grouped).length === 0) {
+          container.innerHTML = '<div class="empty">Номера не найдены</div>';
+          return;
         }
 
-        async function loadRooms(hotelId) {
-            const response = await fetch(`/rooms?hotel_id=${hotelId}`);
-            const rooms = await response.json();
+        let html = '';
+        for (const hotel of allHotels) {
+          const hotelRooms = grouped[hotel.id] || [];
+          if (hotelRooms.length === 0) continue;
 
-            const roomsGrid = document.getElementById(`rooms-${hotelId}`);
-            roomsGrid.innerHTML = '<h3>Номера:</h3>';
-
-            for (const room of rooms) {
-                const roomDiv = document.createElement('div');
-                roomDiv.className = 'room';
-                roomDiv.innerHTML = `
-                    <h4>${room.name}</h4>
-                    <p>${room.description}</p>
-                    <p>Цена: <strong>${room.price} руб.</strong></p>
-                    <p>Удобства: ${room.options.join(', ')}</p>
-                    <p>Количество: ${room.quantity}</p>
-                    <button onclick="openBooking(${room.id})">Забронировать</button>
-                `;
-                roomsGrid.appendChild(roomDiv);
-            }
+          html += `<div class="hotel-section">
+                    <div class="hotel-header">${hotel.name}</div>
+                    <div class="rooms-grid">`;
+          hotelRooms.forEach(room => {
+            html += `
+              <div class="room-card">
+                <h3>${room.name || 'Номер'}</h3>
+                <p>${room.description || 'Описание отсутствует'}</p>
+                <div class="price">от ${room.price || '—'} ₽/ночь</div>
+                <a href="booking.html?room_id=${room.id}">Забронировать</a>
+              </div>`;
+          });
+          html += `</div></div>`;
         }
+        container.innerHTML = html;
+      } catch (err) {
+        console.error('Ошибка загрузки номеров:', err);
+        document.getElementById('hotels-container').innerHTML = '<div class="empty">Не удалось загрузить номера</div>';
+      }
+    }
 
-        async function applyFilters() {
-            const amenity = document.getElementById('amenityInput').value.trim();
-            if (!amenity) {
-                alert("Введите удобство");
-                return;
-            }
+    window.onFilterChange = function() {
+      const checkboxes = document.querySelectorAll('#filters-container input[type="checkbox"]:checked');
+      currentFilters = Array.from(checkboxes).map(cb => cb.value);
+      loadRooms(currentFilters);
+    };
 
-            const response = await fetch(`/rooms?options=${encodeURIComponent(amenity)}`);
-            const rooms = await response.json();
-
-            const container = document.getElementById('hotels-container');
-            container.innerHTML = '<h2>Результаты фильтрации:</h2>';
-            const roomsGrid = document.createElement('div');
-            roomsGrid.className = 'rooms-grid';
-
-            rooms.forEach(room => {
-                const roomDiv = document.createElement('div');
-                roomDiv.className = 'room';
-                roomDiv.innerHTML = `
-                    <h4>${room.name}</h4>
-                    <p>Отель ID: ${room.hotel_id}</p>
-                    <p>${room.description}</p>
-                    <p>Цена: <strong>${room.price} руб.</strong></p>
-                    <p>Удобства: ${room.options.join(', ')}</p>
-                    <p>Количество: ${room.quantity}</p>
-                    <button onclick="openBooking(${room.id})">Забронировать</button>
-                `;
-                roomsGrid.appendChild(roomDiv);
-            });
-            container.appendChild(roomsGrid);
-        }
-
-        function openBooking(roomId) {
-            window.location.href = `/booking.html?room_id=${roomId}`;
-        }
-
-        loadHotels();
-    </script>
+    // Запуск
+    loadData();
+  </script>
 </body>
 </html>

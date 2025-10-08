@@ -1,26 +1,151 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>Бронирование</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Бронирование</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      padding: 20px;
+    }
+    .container {
+      max-width: 500px;
+      margin: 40px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 24px;
+      font-size: 1.8rem;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    input[type="date"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+    .buttons {
+      display: flex;
+      gap: 12px;
+    }
+    button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    #confirm {
+      background: #10b981;
+      color: white;
+    }
+    #confirm:hover {
+      background: #059669;
+    }
+    #cancel {
+      background: #94a3b8;
+      color: white;
+    }
+    #cancel:hover {
+      background: #64748b;
+    }
+  </style>
 </head>
 <body>
-    <h1>Форма бронирования</h1>
-    <form action="/bookings/add" method="post">
-        <input type="hidden" name="room_id" id="room_id" value="">
-        <label>Дата заезда:</label>
-        <input type="date" name="date_from" required><br><br>
-        <label>Дата выезда:</label>
-        <input type="date" name="date_to" required><br><br>
-        <button type="submit">Забронировать</button>
-    </form>
+  <div class="container">
+    <h1>Бронирование номера</h1>
 
-    <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const roomId = urlParams.get('room_id');
-        if (roomId) {
-            document.getElementById('room_id').value = roomId;
+    <form id="booking-form">
+      <input type="hidden" id="room-id" />
+
+      <div class="form-group">
+        <label for="date-from">Дата заезда</label>
+        <input type="date" id="date-from" required />
+      </div>
+
+      <div class="form-group">
+        <label for="date-to">Дата выезда</label>
+        <input type="date" id="date-to" required />
+      </div>
+
+      <div class="buttons">
+        <button type="submit" id="confirm">Подтвердить</button>
+        <button type="button" id="cancel">Отмена</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:8000';
+
+    // Получаем room_id из URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const roomId = urlParams.get('room_id');
+
+    if (!roomId) {
+      alert('Номер не указан');
+      window.history.back();
+    } else {
+      document.getElementById('room-id').value = roomId;
+    }
+
+    document.getElementById('cancel').addEventListener('click', () => {
+      window.history.back();
+    });
+
+    document.getElementById('booking-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const dateFrom = document.getElementById('date-from').value;
+      const dateTo = document.getElementById('date-to').value;
+
+      if (new Date(dateTo) <= new Date(dateFrom)) {
+        alert('Дата выезда должна быть позже даты заезда');
+        return;
+      }
+
+      const bookingData = {
+        room_id: parseInt(roomId),
+        date_from: dateFrom,
+        date_to: dateTo
+      };
+
+      try {
+        const res = await fetch(`${API_BASE}/bookings/add`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(bookingData)
+        });
+
+        if (res.ok) {
+          alert('Бронирование успешно создано!');
+          window.location.href = '/';
+        } else {
+          alert('Ошибка при создании бронирования');
         }
-    </script>
+      } catch (err) {
+        console.error(err);
+        alert('Не удалось отправить запрос. Проверьте подключение.');
+      }
+    });
+  </script>
 </body>
 </html>

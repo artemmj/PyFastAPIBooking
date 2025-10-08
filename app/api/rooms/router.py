@@ -39,7 +39,7 @@ async def add_new_room(room: NewRoomSchema, user: User = Depends(get_current_use
 
 
 @router.get("/options", summary='Получить список доступных опций комнат для фильтрации')
-async def get_room_options(user: User = Depends(get_current_user)):
+async def get_room_options():
     """Получить список всех доступных опций, чтобы фильтровать по ним."""
     options = await RoomsDAO.get_options()
     opts_set = set()

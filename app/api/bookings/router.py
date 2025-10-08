@@ -4,7 +4,7 @@ from pydantic import TypeAdapter
 from app.dao.bookings import BookingDAO
 from app.database.models.user import User
 from app.exceptions import BookingNotExist, RoomCannotBeBooked
-# from tasks import send_booking_confirmation_email
+# from app.tasks import send_booking_confirmation_email
 from app.api.users.dependencies import get_current_user
 
 from .schemas import SBookings, SNewBooking
@@ -21,9 +21,11 @@ async def get_bookings(user: User = Depends(get_current_user)) -> list[SBookings
 
 
 @router.post("/add", summary='Добавить бронь')
-async def add_booking(booking: SNewBooking, user: User = Depends(get_current_user)) -> SNewBooking:
+# Для простого фронта, убрал зависимость юзера через user: User = Depends(get_current_user)
+# и захардкодил id=1, чтобы корректно работал фронт. 
+async def add_booking(booking: SNewBooking) -> SNewBooking:
     booking = await BookingDAO.add(
-        user.id,
+        1,  # booking.user_id
         booking.room_id,
         booking.date_from,
         booking.date_to,
